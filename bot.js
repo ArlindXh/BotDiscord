@@ -21,7 +21,26 @@ client.on("message", (message) => {
         message.channel.send("pong");
     }
 
+    if (command === 'math') {
+
+        message.channel.send("2+2*2=?")
+            .then(() => {
+                message.channel.awaitMessages(response => response.content === "6", {
+                    max: 1,
+                    time: 10000,
+                    errors: ['time'],
+                })
+                    .then((collected) => {
+                        message.channel.send(`${collected.first().content} is correct. Good job ${message.author} but let's be real, it wasnt that hard... `);
+                    })
+                    .catch(() => {
+                        message.channel.send('There was no reply');
+                    });
+            })
+    }
+
 });
+
 
 
 

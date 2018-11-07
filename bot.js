@@ -4,7 +4,9 @@ const client = new Discord.Client();
 
 const config = require("./config.json");
 
-const swearWords = ["darn", "shucks", "frik", "shyte"];
+const swears = ["darn", "shucks", "frik", "shyte"];
+// removing the "!" prefix
+const swearWord = swears.slice(1);
 
 
 client.on("ready", () => {
@@ -29,24 +31,32 @@ client.on("message", async (message) => {
 
 
     if (command === 'math') {
+        if (!message.content === 6) {
+            message.channel.send("Nice try,good luck next time")
+        };
         await message.channel.send("2+2*2=?")
             .then(() => {
                 message.channel.awaitMessages(response => response.content === "6", {
                     max: 1,
-                    time: 10000,
+                    time: 5000,
                     errors: ['time'],
-                })
+                }
+                )
+
                     .then((collected) => {
+
+
                         message.channel.send(`${collected.first().content} is correct. Good job ${message.author} but let's be real, it wasn't that hard... `);
+
                     })
                     .catch(() => {
-                        message.channel.send('There was no reply');
+                        message.channel.send('Better luck next time');
                     });
             })
     }
 
     // warns if u use a swear word 
-    if (swearWords.some(word => message.content.includes(word))) {
+    if (swearWord.some(word => message.content.includes(word))) {
         await message.reply(`Oh, thats a no-no word`)
     }
 

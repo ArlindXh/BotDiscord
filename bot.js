@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
+const talkedRecently = new Set();
 
 const config = require("./config.json");
 
@@ -16,6 +17,17 @@ client.on("ready", () => {
 client.on("message", async (message) => {
     // don't react to other bot replies
     if (message.author.bot) return;
+
+    if (talkedRecently.has(message.author.id))
+        return;
+
+    talkedRecently.add(message.author.id);
+    setTimeout(() => {
+        talkedRecently.delete(message.author.id);
+    }, 2500)
+
+
+
     // don't react to messages that dont start with "!"
     //   if (message.content.indexOf(config.prefix) !== 0) return;
 
@@ -31,9 +43,7 @@ client.on("message", async (message) => {
 
 
     if (command === 'math') {
-        if (!message.content === 6) {
-            message.channel.send("Nice try,good luck next time")
-        };
+
         await message.channel.send("2+2*2=?")
             .then(() => {
                 message.channel.awaitMessages(response => response.content === "6", {
@@ -49,6 +59,7 @@ client.on("message", async (message) => {
                         message.channel.send(`${collected.first().content} is correct. Good job ${message.author} but let's be real, it wasn't that hard... `);
 
                     })
+
                     .catch(() => {
                         message.channel.send('Better luck next time');
                     });
